@@ -1,21 +1,48 @@
-import React, {useContext} from 'react';
-import {StyleSheet, View, Text} from 'react-native';
-import LogContext from '../contexts/LogContext';
+import React, {useRef, useState, useEffect} from 'react';
+import {StyleSheet, View, Animated, Button} from 'react-native';
 
 function CanenderScreen() {
-  const {text} = useContext(LogContext);
   return (
     <View style={styles.block}>
-      <Text style={styles.text}>text : {text}</Text>
+      <FadeInAndOut />
     </View>
   );
 }
 
+function FadeInAndOut() {
+  const animation = useRef(new Animated.Value(1)).current;
+  const [hidden, setHidden] = useState(false);
+  useEffect(() => {
+    Animated.timing(animation, {
+      toValue: hidden ? 0 : 1,
+      useNativeDriver: true,
+    }).start();
+  }, [hidden, animation]);
+  return (
+    <View>
+      <Animated.View
+        style={[
+          styles.rectangle,
+          {
+            opacity: animation,
+          },
+        ]}
+      />
+      <Button
+        title="Toggle"
+        onPress={() => {
+          setHidden(!hidden);
+        }}
+      />
+    </View>
+  );
+}
 const styles = StyleSheet.create({
   block: {},
-  text: {
-    padding: 16,
-    fontSize: 24,
+  rectangle: {
+    width: 100,
+    height: 100,
+    backgroundColor: 'black',
   },
 });
 
